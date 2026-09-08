@@ -1,0 +1,16 @@
+{
+  "placeholderImages": [
+    {
+      "id": "user-avatar",
+      "description": "User avatar in the header",
+      "imageUrl": "https://images.unsplash.com/photo-1693039537350-3bba6975add7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwZXJzb24lMjBmYWNlfGVufDB8fHx8MTc2MjQyMTc3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person face"
+    },
+    {
+      "id": "coach-avatar",
+      "description": "Avatar for the Défi45j Coach",
+      "imageUrl": "https://img.freepik.com/free-vector/vibrant-person-with-colorful-hair-style_23-2151590481.jpg",
+      "imageHint": "fun character illustration"
+    }
+  ]
+}

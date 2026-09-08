@@ -1,0 +1,86 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function getRole(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data.role;
+    }
+
+    function isAdmin(userId) {
+      return getRole(userId) == 'Admin';
+    }
+
+    match /users/{userId} {
+      // Users can read their own profile
+      // Admins can read any user profile
+      allow get: if isSignedIn() && (isOwner(userId) || isAdmin(request.auth.uid));
+
+      // Users can create their own profile during signup
+      // This is the onboarding step after email/pass creation
+      allow create: if isSignedIn() && isOwner(userId);
+      
+      // Users can update their own profile
+      // Admins can update any user profile (e.g., to change a role)
+      allow update: if isSignedIn() && (isOwner(userId) || isAdmin(request.auth.uid));
+      
+      // Only Admins can delete users
+      allow delete: if isSignedIn() && isAdmin(request.auth.uid);
+      
+      // Listing users is allowed for any signed-in user for rankings, but restricted to Admins for other purposes.
+      // We will allow any signed-in user to list for now to build the rankings.
+      allow list: if isSignedIn();
+    }
+
+    match /sessions/{sessionId} {
+      // Admins can create new sessions
+      allow create: if isSignedIn() && isAdmin(request.auth.uid);
+
+      // Any authenticated user can read session data.
+      allow get: if isSignedIn();
+
+      // Admins can update sessions (e.g., change name or code)
+      allow update: if isSignedIn() && isAdmin(request.auth.uid);
+
+      // Admins can delete sessions
+      allow delete: if isSignedIn() && isAdmin(request.auth.uid);
+
+      // Allow listing sessions for any user (including unauthenticated).
+      // This is necessary for the registration form to validate the secret code
+      // before a user is created and signed in.
+      allow list: if true;
+    }
+
+    // This collection is being deprecated in favor of dailyProgress
+    match /challengeProgress/{progressId} {
+      allow read, write: if isSignedIn() && isOwner(progressId.split('_')[0]);
+      allow list: if isSignedIn();
+    }
+
+    match /dailyProgress/{dailyProgressId} {
+      // A user can read, create, and update their own daily progress.
+      // The ID is formatted as `${userId}_${date}`.
+      allow read, create, update: if isSignedIn() && isOwner(dailyProgressId.split('_')[0]);
+      
+      // A user can list their own daily progress documents.
+      // Admins can list all progress for analytics.
+      allow list: if isSignedIn();
+    }
+    
+    match /moodEntries/{moodEntryId} {
+      // Users can read/write their own mood entry.
+      // The moodEntryId is formatted as `${userId}_${date}`.
+      allow read, write: if isSignedIn() && isOwner(moodEntryId.split('_')[0]);
+    }
+  }
+}

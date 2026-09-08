@@ -1,0 +1,287 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user in the Défi45j application.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The user's given name."
+        },
+        "surname": {
+          "type": "string",
+          "description": "The user's family name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "The user's role.",
+          "enum": ["Admin", "Consultant"]
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "The ID of the session the user belongs to. Null for Admins."
+        },
+        "lastActivity": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of the user's last activity."
+        },
+        "profileComplete": {
+          "type": "boolean",
+          "description": "Indicates if the user has completed their onboarding profile."
+        },
+        "sponsorFirstName": {
+          "type": "string",
+          "description": "The first name of the user's sponsor (parrain/marraine)."
+        },
+        "sponsorLastName": {
+          "type": "string",
+          "description": "The last name of the user's sponsor (parrain/marraine)."
+        },
+        "archived": {
+          "type": "boolean",
+          "description": "Indicates if the user account is archived and cannot be logged into."
+        },
+        "conferenceDate": {
+          "type": "string",
+          "format": "date",
+          "description": "The date of the user's planned conference."
+        },
+        "guestGoal": {
+          "type": "number",
+          "description": "The user's goal for the number of guests at their conference."
+        },
+        "conferenceGuestCount": {
+            "type": "number",
+            "description": "The current number of registered guests for the user's conference.",
+            "default": 0
+        }
+      },
+      "required": ["email", "role", "profileComplete"]
+    },
+    "Session": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Session",
+      "type": "object",
+      "description": "Represents a session created by an Admin.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the session (e.g., 'Défi Pro Xavier')."
+        },
+        "secretCode": {
+          "type": "string",
+          "description": "The unique secret code for this session."
+        },
+        "adminId": {
+          "type": "string",
+          "description": "The ID of the Admin who created this session."
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The start date of the 45-day challenge."
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The end date of the 45-day challenge."
+        },
+        "organizerName": {
+          "type": "string",
+          "description": "The name of the organizer responsible for this session."
+        },
+        "archived": {
+          "type": "boolean",
+          "description": "Indicates if the session is archived."
+        }
+      },
+      "required": ["name", "secretCode", "adminId", "startDate", "endDate", "organizerName"]
+    },
+    "ChallengeProgress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Challenge Progress",
+      "type": "object",
+      "description": "Stores a user's total progress for a specific challenge session. This is an aggregation and may be deprecated.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "The ID of the session."
+        },
+        "c2Count": {
+          "type": "number",
+          "description": "Total count for Invitations."
+        },
+        "r0Count": {
+          "type": "number",
+          "description": "Total count for Entretien découverte."
+        },
+        "r1Count": {
+          "type": "number",
+,"description": "Total count for Prise de connaissance."
+        },
+        "r2Count": {
+          "type": "number",
+          "description": "Total count for Préconisation."
+        },
+        "r3Count": {
+          "type": "number",
+          "description": "Total count for Souscription."
+        },
+        "wellnessCompletedDays": {
+          "type": "array",
+          "items": { "type": "string", "format": "date" },
+          "description": "Array of dates where at least one wellness routine was completed."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the last update."
+        }
+      },
+      "required": [
+        "userId",
+        "sessionId"
+      ]
+    },
+    "DailyChallengeProgress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Daily Challenge Progress",
+      "type": "object",
+      "description": "Stores a user's challenge progress for a single day.",
+      "properties": {
+        "userId": { "type": "string", "description": "The ID of the user." },
+        "sessionId": { "type": "string", "description": "The ID of the session." },
+        "date": { "type": "string", "format": "date", "description": "The date of the progress entry (YYYY-MM-DD)." },
+        "c2Count": { "type": "number", "default": 0 },
+        "r0Count": { "type": "number", "default": 0 },
+        "r1Count": { "type": "number", "default": 0 },
+        "r2Count": { "type": "number", "default": 0 },
+        "r3Count": { "type": "number", "default": 0 },
+        "wellnessCompleted": { "type": "boolean", "default": false },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "sessionId", "date"]
+    },
+    "MoodEntry": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Mood Entry",
+        "type": "object",
+        "description": "Represents a user's daily mood entry.",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "The ID of the user."
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "The date of the mood entry (YYYY-MM-DD)."
+          },
+          "level": {
+            "type": "number",
+            "description": "The mood level from 1 to 5.",
+            "enum": [1, 2, 3, 4, 5]
+          },
+          "title": {
+            "type": "string",
+            "description": "The title corresponding to the mood level."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the entry was created."
+          }
+        },
+        "required": ["userId", "date", "level", "title"]
+      }
+  },
+  "auth": {
+    "providers": ["password"]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Users can read their own data. Admins have broader access.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/sessions/{sessionId}",
+        "definition": {
+          "entityName": "Session",
+          "schema": {
+            "$ref": "#/backend/entities/Session"
+          },
+          "description": "Stores session data. Admins can create/manage sessions. Consultants can read the session they belong to.",
+          "params": [
+            {
+              "name": "sessionId",
+              "description": "The unique identifier of the session."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/challengeProgress/{progressId}",
+        "definition": {
+          "entityName": "ChallengeProgress",
+          "schema": { "$ref": "#/backend/entities/ChallengeProgress" },
+          "description": "Stores a user's total progress for a challenge. This may be deprecated in favor of daily summaries.",
+          "params": [
+            { "name": "progressId", "description": "Typically `${userId}_${sessionId}`." }
+          ]
+        }
+      },
+      {
+        "path": "/dailyProgress/{dailyProgressId}",
+        "definition": {
+          "entityName": "DailyChallengeProgress",
+          "schema": { "$ref": "#/backend/entities/DailyChallengeProgress" },
+          "description": "Stores a summary of a user's challenge actions for a single day.",
+          "params": [
+            { "name": "dailyProgressId", "description": "The unique ID, typically `${userId}_${date}`." }
+          ]
+        }
+      },
+      {
+        "path": "/moodEntries/{moodEntryId}",
+        "definition": {
+          "entityName": "MoodEntry",
+          "schema": {
+            "$ref": "#/backend/entities/MoodEntry"
+          },
+          "description": "Stores a user's daily mood entry. Users can read/write their own entries.",
+          "params": [
+            {
+              "name": "moodEntryId",
+              "description": "The unique identifier of the mood entry, typically `${userId}_${date}`."
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
